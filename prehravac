@@ -1,0 +1,85 @@
+import sys
+from PyQt5.QtCore import QUrl
+from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
+from PyQt5.QtWidgets import QApplication, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+
+class Player(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        # Vytvoření přehrávače a připojení událostí
+        self.player = QMediaPlayer(self)
+        self.player.error.connect(self.handle_error)
+
+        # Vytvoření tlačítek a štítku pro zobrazení informací o skladbě
+        self.prev_button = QPushButton("Prev")
+        self.play_pause_button = QPushButton("Play")
+        self.next_button = QPushButton("Next")
+        self.song_info_label = QLabel()
+
+        # Nastavení layoutu a přidání widgetů
+        layout = QVBoxLayout(self)
+        controls_layout = QHBoxLayout()
+        controls_layout.addWidget(self.prev_button)
+        controls_layout.addWidget(self.play_pause_button)
+        controls_layout.addWidget(self.next_button)
+        layout.addLayout(controls_layout)
+        layout.addWidget(self.song_info_label)
+
+        # Připojení akcí tlačítek
+        self.prev_button.clicked.connect(self.on_prev_clicked)
+        self.play_pause_button.clicked.connect(self.on_play_pause_clicked)
+        self.next_button.clicked.connect(self.on_next_clicked)
+
+        # Nastavení vzhledu aplikace
+        self.setWindowTitle("Radio Player")
+        self.setStyleSheet("""
+            QPushButton {
+                font-size: 18px;
+                border: none;
+                background-color: #333333;
+                color: #ffffff;
+                padding: 15px;
+            }
+            QPushButton:hover {
+                background-color: #666666;
+            }
+            QLabel {
+                font-size: 18px;
+                color: #333333;
+            }
+        """)
+
+        def on_prev_clicked(self):
+            # Přepnutí na předchozí stanici
+            pass
+
+        def on_play_pause_clicked(self):
+            # Přepínání mezi přehráváním a pozastavením
+            if self.player.state() == QMediaPlayer.PlayingState:
+                self.player.pause()
+                self.play_pause_button.setText("Play")
+            else:
+                self.player.play()
+                self.play_pause_button.setText("Pause")
+
+        def on_next_clicked(self):
+            # Přepnutí na následující stanici
+            pass
+
+        def handle_error(self):
+            # Zobrazení chybového hlášení
+            self.song_info_label.setText("Error: Unable to play stream")
+
+        def play_stream(self, stream_url):
+            # Přehrání streamu ze zadané adresy
+            self.player.setMedia(QMediaContent(QUrl(stream_url)))
+            self.player.play()
+
+        def current_stream_url(self):
+            # Získání adresy streamu aktuálně přehrávané stanice
+            return self.player.currentMedia().canonicalUrl().toString()
+
+        def state(self):
+            # Získání stavu přehrávače
+            return self.player.state()
